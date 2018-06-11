@@ -4,6 +4,9 @@
 import analysis.csv as c_an
 import analysis.xml as x_an
 import argparse
+import logging as lg
+
+lg.basicConfig(level = lg.DEBUG)
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -13,11 +16,23 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
-    datafile = args.datafile
-    if args.extension == "xml":
-        x_an.launch_analysis(datafile)
-    elif args.extension == "csv":
-        c_an.launch_analysis(datafile)
+    try:
+        datafile = args.datafile
+        if datafile == None:
+            raise Warning("You must indicate a datafile !")
+        else:
+            try:
+                if args.extension == "xml":
+                    x_an.launch_analysis(datafile)
+                elif args.extension == "csv":
+                    # import pdb;pdb.set_trace() : DEBOGGER
+                    c_an.launch_analysis(datafile)
+            except FileNotFoundError as e:
+                 lg.error(e)
+            finally:
+                lg.info('#################### Analysis is over ######################')
+    except Warning as e:
+        lg.warning(e)
 
 if __name__ == "__main__":
     main()
